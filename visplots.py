@@ -53,6 +53,7 @@ def knnDecisionPlot(XTrain, yTrain, XTest, yTest, n_neighbors, weights):
     
     plt.pcolormesh(xx, yy, Z, cmap = cmap_light)
     plt.scatter(XTest[:, 0], XTest[:, 1], c = yTest, cmap = cmap_bold)
+    plt.contour(xx, yy, Z, colors=['k'], linestyles=['-'], levels=[0])
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     plt.xlabel("Radius")
@@ -66,14 +67,9 @@ def svmDecisionPlot(XTrain, yTrain, XTest, yTest, kernel):
     cmap_light = ListedColormap(["#AAAAFF", "#AAFFAA", "#FFAAAA"])
     cmap_bold = ListedColormap(["#0000FF", "#00FF00", "#FF0000"])
     
-    #plt.scatter(Xauto[:, 0],  Xauto[:, 1],  c=yTransformed,  zorder=10, cmap=cmap_bold)
-    #plt.scatter(XTrain[:, 0], XTrain[:, 1], c=yTrain, zorder=10, cmap=cmap_bold)
     plt.scatter(XTest[:, 0],  XTest[:, 1],  c=yTest,  zorder=10, cmap=cmap_bold)
-
-    # Circle out the test data
-    #plt.scatter(XTest[:, 0],  XTest[:, 1],  s=80, facecolors='none', zorder=10)
-
     plt.axis('tight')
+
     x_min = XTest[:, 0].min()-2
     x_max = XTest[:, 0].max()+2
     y_min = XTest[:, 1].min()-2
@@ -82,15 +78,13 @@ def svmDecisionPlot(XTrain, yTrain, XTest, yTest, kernel):
     XX, YY = np.mgrid[x_min:x_max:200j, y_min:y_max:200j]
 
     if (kernel == 'linear'):
-        # We are just going to use the first two dimensions for our visualisation
-        linearSVM = SVC(kernel='linear')
-        linearSVM.fit(XTrain[:,0:2], yTrain)
-        Z = linearSVM.decision_function(np.c_[XX.ravel(), YY.ravel()])
+        clf = SVC(kernel='linear')
+        clf.fit(XTrain[:,0:2], yTrain)
     else:
-        rbfSVM = SVC(kernel='rbf', C=1.0, gamma=0.0)
-        rbfSVM.fit(XTrain[:,0:2], yTrain)
-        Z = rbfSVM.decision_function(np.c_[XX.ravel(), YY.ravel()])
+        clf = SVC(kernel='rbf', C=1.0, gamma=0.0)
+        clf.fit(XTrain[:,0:2], yTrain)
 
+    Z = clf.decision_function(np.c_[XX.ravel(), YY.ravel()])
     # Put the result into a color plot
     Z = Z.reshape(XX.shape)
     plt.pcolormesh(XX, YY, Z > 0, cmap=cmap_light)
@@ -125,6 +119,7 @@ def nnDecisionPlot(XTrain, yTrain, XTest, yTest, hidden_layer, learning_rate):
     
     plt.pcolormesh(xx, yy, Z, cmap = cmap_light)
     plt.scatter(XTest[:, 0], XTest[:, 1], c = yTest, cmap = cmap_bold)
+    plt.contour(xx, yy, Z, colors=['k'], linestyles=['-'], levels=[0])
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     plt.xlabel("Radius")
@@ -156,10 +151,10 @@ def logregDecisionPlot(XTrain, yTrain, XTest, yTest, pen_val='l2', c_val=10):
     
     plt.pcolormesh(xx, yy, Z, cmap = cmap_light)
     plt.scatter(XTest[:, 0], XTest[:, 1], c = yTest, cmap = cmap_bold)
+    plt.contour(xx, yy, Z, colors=['k'], linestyles=['-'], levels=[0])
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     plt.xlabel("Radius")
     plt.ylabel("Perimeter")
     plt.title("2-Class classification (l2 = '%s', C = '%f')" % (pen_val, c_val))
     plt.show()
-
